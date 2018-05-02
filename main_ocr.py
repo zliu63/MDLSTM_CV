@@ -42,7 +42,7 @@ def train(train_dir=None, val_dir=None, mode='train'):
     batch_size = FLAGS.batch_size
 
 
-    with tf.device('/cpu:0'):
+    with tf.device('/device:GPU:0'):
         config = tf.ConfigProto(allow_soft_placement=True)
         with tf.Session(config=config) as sess:
             sess.run(tf.global_variables_initializer())
