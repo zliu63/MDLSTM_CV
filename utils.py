@@ -2,7 +2,7 @@ import os
 import numpy as np
 import tensorflow as tf
 from PIL import Image
-#import cv2
+import cv2
 
 # +-* + () + 10 digit + blank + space
 num_classes = 3 + 2 + 10 + 1 + 1
@@ -64,8 +64,8 @@ class DataIterator:
         for root, sub_folder, file_list in os.walk(data_dir):
             for file_path in file_list:
                 image_name = os.path.join(root, file_path)
-                #im = cv2.imread(image_name, 0).astype(np.float32)/255.
-                im = np.array(Image.open(image_name).convert("L")).astype(np.float32)/255.
+                im = cv2.imread(image_name, 0).astype(np.float32)/255.
+                #im = np.array(Image.open(image_name).convert("L")).astype(np.float32)/255. #mycode
                 # resize to same height, different width will consume time on padding
                 # im = cv2.resize(im, (image_width, image_height))
                 im = np.reshape(im, [FLAGS.image_height, FLAGS.image_width, FLAGS.image_channel])
