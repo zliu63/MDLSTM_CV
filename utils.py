@@ -23,7 +23,7 @@ tf.app.flags.DEFINE_integer('num_hidden', 50, 'number of hidden units in lstm')
 tf.app.flags.DEFINE_integer('num_epochs', 2, 'maximum epochs')
 tf.app.flags.DEFINE_integer('batch_size', 40, 'the batch_size')
 tf.app.flags.DEFINE_integer('save_steps', 1000, 'the step to save checkpoint')
-tf.app.flags.DEFINE_integer('validation_steps', 100, 'the step to validation')
+tf.app.flags.DEFINE_integer('validation_steps', 10, 'the step to validation')
 
 tf.app.flags.DEFINE_float('decay_rate', 0.98, 'the lr decay rate')
 tf.app.flags.DEFINE_float('beta1', 0.9, 'parameter of adam optimizer beta1')
@@ -37,7 +37,7 @@ tf.app.flags.DEFINE_string('val_dir', './imgs/val/', 'the val data dir')
 tf.app.flags.DEFINE_string('infer_dir', './imgs/infer/', 'the infer data dir')
 tf.app.flags.DEFINE_string('log_dir', './log', 'the logging dir')
 tf.app.flags.DEFINE_string('mode', 'train', 'train, val or infer')
-tf.app.flags.DEFINE_integer('num_gpus', 1, 'num of gpus')
+tf.app.flags.DEFINE_integer('num_gpus', 0, 'num of gpus')
 
 
 FLAGS = tf.app.flags.FLAGS
