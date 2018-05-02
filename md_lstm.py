@@ -140,7 +140,7 @@ def multi_dimensional_rnn_while_loop(rnn_size, input_data, sh, dims=None, scope_
         
         # Reverse the selected dimensions
         if dims is not None:
-            assert dims[0] is False and dims[3] is False
+            #assert dims[0] is False and dims[3] is False
             x = tf.reverse(x, dims)
             
         # Reorder inputs to (h, w, batch_size, features)
