@@ -1,7 +1,8 @@
 import tensorflow as tf
 from tensorflow.contrib.rnn import RNNCell, LSTMStateTuple
 #from tensorflow.contrib.rnn.python.ops.core_rnn_cell_impl import _linear
-from tensorflow.python.ops.rnn_cell_impl import _linear
+#from tensorflow.python.ops.rnn_cell_impl import _linear #bw version
+from tensorflow.contrib.rnn.python.ops.core_rnn_cell import _linear #local tf.1.8.0
 
 
 def ln(tensor, scope=None, epsilon=1e-5):

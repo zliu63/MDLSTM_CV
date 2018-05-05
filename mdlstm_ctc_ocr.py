@@ -119,8 +119,8 @@ class LSTMOCR(object):
         self.cost = tf.reduce_mean(self.loss)
         tf.summary.scalar('cost',self.cost)
 
-        self.lrn_rate = tf.train.exponential_decay(self.learning_rate, self.global_step, self.decay_steps, self.decay_rate, staircase = True)
-        self.optimizer = tf.train.AdamOptimizer(learning_rate = self.learning_rate, beta1= self.beta1, beta2 = self.beta2).minimize(self.loss, global_step = self.global_step)
+        self.lrn_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate, self.global_step, FLAGS.decay_steps, FLAGS.decay_rate, staircase = True)
+        self.optimizer = tf.train.AdamOptimizer(learning_rate = FLAGS.learning_rate, beta1= FLAGS.beta1, beta2 = FLAGS.beta2).minimize(self.loss, global_step = self.global_step)
 
         train_ops = [self.optimizer]  # no '+ self._extra_train_ops' here since we don't have cnn
         self.train_op = tf.group(*train_ops)
