@@ -66,6 +66,11 @@ class LSTMOCR(object):
         hidden1_2,_ = multi_dimensional_rnn_while_loop(rnn_size = 5, input_data = layer0_out, sh = [2,4], dims = [2], scope_n = 'hidden1_2')
         hidden1_3,_ = multi_dimensional_rnn_while_loop(rnn_size = 5, input_data = layer0_out, sh = [2,4], dims = [1,2], scope_n = 'hedden1_3')
 
+        hidden1_0 = tf.nn.dropout(hidden1_0,0.5)
+        hidden1_1 = tf.nn.dropout(hidden1_1,0.5)
+        hidden1_2 = tf.nn.dropout(hidden1_2,0.5)
+        hidden1_3 = tf.nn.dropout(hidden1_3,0.5)
+
         hidden1_out = tf.concat([hidden1_0, hidden1_1, hidden1_2, hidden1_3], 3)
         layer1_out = slim.fully_connected(inputs = hidden1_out, num_outputs = 1, activation_fn = tf.tanh) #num_outputs = num_classes? 
 
