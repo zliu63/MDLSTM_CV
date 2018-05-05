@@ -24,7 +24,7 @@ class LSTMOCR(object):
         # id array, size = [batch_size] <- Indicate the seq len of img a in batch d.
         self.seq_len = tf.placeholder(tf.int32, [None])
         # l2
-        self._extra_train_ops = []
+        #self._extra_train_ops = []
         # Other stuffs
         self.learning_rate = FLAGS.initial_learning_rate
         self.decay_steps = FLAGS.decay_steps
@@ -39,6 +39,13 @@ class LSTMOCR(object):
         self.inputs = tf.placeholder(tf.float32, [None,self.h,self.w,self.channels])
 
     def build_graph(self):
+        self._build_model()
+        self._build_train_op()
+
+        self.merged_summay = tf.summary.merge_all()
+
+
+    def _build_model(self):
         
         # maybe no y, we use self.labels ?? y = tf.placeholder(tf.float32, [batch_size, 
 
@@ -56,7 +63,7 @@ class LSTMOCR(object):
         hidden0_out = tf.concat([hidden0_0, hidden0_1, hidden0_2, hidden0_3], 3)
         layer0_out = slim.fully_connected(inputs = hidden0_out, num_outputs = 1, activation_fn = tf.tanh) #num_outputs = num_classes?       
         # Debug shape
-        layer0_out = tf.Print(layer0_out, [tf.shape(layer0_out)],message = 'layer0_out.shape = ')
+        #layer0_out = tf.Print(layer0_out, [tf.shape(layer0_out)],message = 'layer0_out.shape = ')
 
 
 
@@ -75,7 +82,7 @@ class LSTMOCR(object):
         layer1_out = slim.fully_connected(inputs = hidden1_out, num_outputs = 1, activation_fn = tf.tanh) #num_outputs = num_classes? 
 
         # Debug shape
-        layer1_out = tf.Print(layer1_out, [tf.shape(layer1_out)],message = 'layer1_out.shape = ')
+        #layer1_out = tf.Print(layer1_out, [tf.shape(layer1_out)],message = 'layer1_out.shape = ')
 
         # layer2 4 directions
         hidden2_0,_ = multi_dimensional_rnn_while_loop(rnn_size = 50, input_data = layer1_out, sh = [1,1], dims = None, scope_n = 'hidden2_0')
@@ -87,7 +94,7 @@ class LSTMOCR(object):
         layer2_out = slim.fully_connected(inputs = hidden2_out, num_outputs = num_classes, activation_fn = tf.tanh) #num_outputs = num_classes? 
 
         # Debug shape
-        layer2_out = tf.Print(layer2_out, [tf.shape(layer2_out)],message = 'layer2_out.shape = ')
+        #layer2_out = tf.Print(layer2_out, [tf.shape(layer2_out)],message = 'layer2_out.shape = ')
 
 
 
@@ -98,21 +105,10 @@ class LSTMOCR(object):
         logits = tf.reshape(layer2_out, [batch_s, -1, num_classes])
         self.logits = tf.transpose(logits, (1, 0, 2))
         
-        ''' /* loss from ctc_example */
-        # Compute loss
-        self.loss = tf.nn.ctc_loss(labels = self.labels, inputs = self.logits, sequence_length = self.seq_len)
-        self.cost = tf.reduce_mean(self.loss)
+    
 
-        self.optimizer = tf.train.MomentumOptimizer(self.learning_rate,0.9).minimize(self.cost)
 
-        # Option 2: tf.nn.ctc_beam_search_decoder
-        # (it's slower but you'll get better results)
-        self.decoded, self.log_prob = tf.nn.ctc_greedy_decoder(self.logits, self.seq_len)
-
-        # Inaccuracy: label error rate
-        self.ler = tf.reduce_mean(tf.edit_distance(tf.cast(self.decoded[0], tf.int32), self.labels))
-        '''
-        
+    def _build_train_op(self):
         # loss from cnn_lstm_ctc
         self.global_step = tf.Variable(0,trainable = False)
         self.loss = tf.nn.ctc_loss(labels = self.labels, inputs = self.logits, sequence_length = self.seq_len)
@@ -127,7 +123,7 @@ class LSTMOCR(object):
         self.decoded, self.log_prob = tf.nn.ctc_beam_search_decoder(self.logits, self.seq_len, merge_repeated = False)
         self.dense_decoded = tf.sparse_tensor_to_dense(self.decoded[0], default_value =-1)    
 
-        self.merged_summay = tf.summary.merge_all()
+        
 
 
 

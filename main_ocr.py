@@ -100,7 +100,6 @@ def train(train_dir=None, val_dir=None, mode='train'):
                 # do validation
                 if step % FLAGS.validation_steps == 0:
                     acc_batch_total = 0
-                    lastbatch_err = 0
                     lr = 0
                     for j in range(num_batches_per_epoch_val):
                         indexs_val = [shuffle_idx_val[i % num_val_samples] for i in
@@ -111,7 +110,7 @@ def train(train_dir=None, val_dir=None, mode='train'):
                                     model.labels: val_labels,
                                     model.seq_len: val_seq_len}
 
-                        dense_decoded, lastbatch_err, lr = \
+                        dense_decoded, lr = \
                             sess.run([model.dense_decoded, model.lrn_rate],
                                      val_feed)
 
@@ -129,10 +128,10 @@ def train(train_dir=None, val_dir=None, mode='train'):
                     now = datetime.datetime.now()
                     log = "{}/{} {}:{}:{} Epoch {}/{}, " \
                           "accuracy = {:.3f},avg_train_cost = {:.3f}, " \
-                          "lastbatch_err = {:.3f}, time = {:.3f},lr={:.8f}"
+                          "time = {:.3f},lr={:.8f}"
                     print(log.format(now.month, now.day, now.hour, now.minute, now.second,
                                      cur_epoch + 1, FLAGS.num_epochs, accuracy, avg_train_cost,
-                                     lastbatch_err, time.time() - start_time, lr))
+                                     time.time() - start_time, lr))
 
 
 
