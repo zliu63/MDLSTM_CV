@@ -56,46 +56,7 @@ def train(train_dir=None, val_dir=None, mode='train'):
                     saver.restore(sess, ckpt)
                     print('restore from the checkpoint{0}'.format(ckpt))
 
-            print('=============================begin training=============================')
-            ''' train code from ctc_example
-            for curr_epoch in range(FLAGS.num_epochs):
-                shuffle_idx = np.random.permutation(num_train_samples)
-                train_cost = train_ler = 0
-                start = time.time()
-                num_examples = 0
-                for cur_batch in range(num_batches_per_epoch):
-                    if (cur_batch + 1) % 100 == 0:
-                        print('batch', cur_batch, ': time', time.time() - batch_time)
-                    batch_time = time.time()
-                    indexs = [shuffle_idx[i % num_train_samples] for i in range(cur_batch * FLAGS.batch_size, (cur_batch + 1) * FLAGS.batch_size)]
-                    batch_inputs, batch_seq_len, batch_labels = train_feeder.input_index_generate_batch(indexs)
-                    feed = {model.inputs: batch_inputs,
-                            model.labels: batch_labels,
-                            model.seq_len: batch_seq_len}
-
-                    batch_cost, _ = sess.run([model.cost, model.optimizer], feed)
-                    delta_train_cost = batch_cost*batch_size
-                    train_cost += delta_train_cost                    
-                    delta_train_ler = sess.run(model.ler, feed_dict=feed)*batch_size                    
-                    train_ler += delta_train_ler
-                    num_examples += batch_size
-                    log = 'cur_batch = {}, batch_cost = {}, delta_train_cost = {}, delta_train_ler = {}'
-                    print(log.format(cur_batch,batch_cost,delta_train_cost,delta_train_ler))  
-
-                train_cost /= num_examples
-                train_ler /= num_examples
-
-                val_feed = {model.inputs: val_inputs,
-                            model.labels: val_targets,
-                            model.seq_len: val_seq_len}
-
-                val_cost, val_ler = sess.run([model.cost, model.ler], feed_dict=val_feed)
-
-                log = "Epoch {}/{}, train_cost = {:.3f}, train_ler = {:.3f}, val_cost = {:.3f}, val_ler = {:.3f}, time = {:.3f}"
-                print(log.format(curr_epoch+1, num_epochs, train_cost, train_ler,
-                                 val_cost, val_ler, time.time() - start))
-            '''
-            
+            print('=============================begin training=============================')            
             for cur_epoch in range(FLAGS.num_epochs):
                 shuffle_idx = np.random.permutation(num_train_samples)
                 train_cost = 0
@@ -174,6 +135,45 @@ def train(train_dir=None, val_dir=None, mode='train'):
                                          cur_epoch + 1, FLAGS.num_epochs, accuracy, avg_train_cost,
                                          lastbatch_err, time.time() - start_time, lr))
             
+            ''' train code from ctc_example
+            for curr_epoch in range(FLAGS.num_epochs):
+                shuffle_idx = np.random.permutation(num_train_samples)
+                train_cost = train_ler = 0
+                start = time.time()
+                num_examples = 0
+                for cur_batch in range(num_batches_per_epoch):
+                    if (cur_batch + 1) % 100 == 0:
+                        print('batch', cur_batch, ': time', time.time() - batch_time)
+                    batch_time = time.time()
+                    indexs = [shuffle_idx[i % num_train_samples] for i in range(cur_batch * FLAGS.batch_size, (cur_batch + 1) * FLAGS.batch_size)]
+                    batch_inputs, batch_seq_len, batch_labels = train_feeder.input_index_generate_batch(indexs)
+                    feed = {model.inputs: batch_inputs,
+                            model.labels: batch_labels,
+                            model.seq_len: batch_seq_len}
+
+                    batch_cost, _ = sess.run([model.cost, model.optimizer], feed)
+                    delta_train_cost = batch_cost*batch_size
+                    train_cost += delta_train_cost                    
+                    delta_train_ler = sess.run(model.ler, feed_dict=feed)*batch_size                    
+                    train_ler += delta_train_ler
+                    num_examples += batch_size
+                    log = 'cur_batch = {}, batch_cost = {}, delta_train_cost = {}, delta_train_ler = {}'
+                    print(log.format(cur_batch,batch_cost,delta_train_cost,delta_train_ler))  
+
+                train_cost /= num_examples
+                train_ler /= num_examples
+
+                val_feed = {model.inputs: val_inputs,
+                            model.labels: val_targets,
+                            model.seq_len: val_seq_len}
+
+                val_cost, val_ler = sess.run([model.cost, model.ler], feed_dict=val_feed)
+
+                log = "Epoch {}/{}, train_cost = {:.3f}, train_ler = {:.3f}, val_cost = {:.3f}, val_ler = {:.3f}, time = {:.3f}"
+                print(log.format(curr_epoch+1, num_epochs, train_cost, train_ler,
+                                 val_cost, val_ler, time.time() - start))
+            '''
+
 
 '''
 def infer(img_path, mode='infer'):
