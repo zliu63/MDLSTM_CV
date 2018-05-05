@@ -231,3 +231,6 @@ def multi_dimensional_rnn_while_loop(rnn_size, input_data, sh, dims=None, scope_
 
         # Return the output and the inner states
         return y, states
+
+
+

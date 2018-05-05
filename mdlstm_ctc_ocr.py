@@ -43,7 +43,7 @@ class LSTMOCR(object):
         self._build_train_op()
 
         self.merged_summay = tf.summary.merge_all()
-
+        
 
     def _build_model(self):
         
@@ -55,16 +55,13 @@ class LSTMOCR(object):
         hidden0_2,_ = multi_dimensional_rnn_while_loop(rnn_size = 2, input_data = self.inputs, sh = [3,4], dims = [2], scope_n = 'hidden0_2')
         hidden0_3,_ = multi_dimensional_rnn_while_loop(rnn_size = 2, input_data = self.inputs, sh = [3,4], dims = [1,2], scope_n = 'hedden0_3')
 
-        hidden0_0 = tf.nn.dropout(hidden0_0,0.5)
-        hidden0_1 = tf.nn.dropout(hidden0_1,0.5)
-        hidden0_2 = tf.nn.dropout(hidden0_2,0.5)
-        hidden0_3 = tf.nn.dropout(hidden0_3,0.5)
         
         hidden0_out = tf.concat([hidden0_0, hidden0_1, hidden0_2, hidden0_3], 3)
+        hidden0_out = tf.reduce_mean(hidden0_out, axis = 3)
+        hidden0_out = tf.expand_dims(hidden0_out, axis = 3)
+        hidden0_out = tf.nn.tanh(hidden0_out)
         layer0_out = slim.fully_connected(inputs = hidden0_out, num_outputs = 6, activation_fn = tf.tanh) #num_outputs = num_classes?       
         # Debug shape
-        #layer0_out = tf.Print(layer0_out, [tf.shape(layer0_out)],message = 'layer0_out.shape = ')
-
 
 
         # layer1 4 directions
@@ -73,12 +70,10 @@ class LSTMOCR(object):
         hidden1_2,_ = multi_dimensional_rnn_while_loop(rnn_size = 5, input_data = layer0_out, sh = [2,4], dims = [2], scope_n = 'hidden1_2')
         hidden1_3,_ = multi_dimensional_rnn_while_loop(rnn_size = 5, input_data = layer0_out, sh = [2,4], dims = [1,2], scope_n = 'hedden1_3')
 
-        hidden1_0 = tf.nn.dropout(hidden1_0,0.5)
-        hidden1_1 = tf.nn.dropout(hidden1_1,0.5)
-        hidden1_2 = tf.nn.dropout(hidden1_2,0.5)
-        hidden1_3 = tf.nn.dropout(hidden1_3,0.5)
-
         hidden1_out = tf.concat([hidden1_0, hidden1_1, hidden1_2, hidden1_3], 3)
+        hidden1_out = tf.reduce_mean(hidden1_out, axis = 3)
+        hidden1_out = tf.expand_dims(hidden1_out, axis = 3)
+        hidden1_out = tf.nn.tanh(hidden1_out)
         layer1_out = slim.fully_connected(inputs = hidden1_out, num_outputs = 20, activation_fn = tf.tanh) #num_outputs = num_classes? 
 
         # Debug shape
@@ -95,9 +90,6 @@ class LSTMOCR(object):
 
         # Debug shape
         # layer2_out = tf.Print(layer2_out, [tf.shape(layer2_out)],message = 'layer2_out.shape = ')
-
-
-
 
         # Reshape for ctc
         shape = tf.shape(self.inputs)

@@ -20,10 +20,10 @@ tf.app.flags.DEFINE_integer('image_channel', 1, 'image channels as input')
 tf.app.flags.DEFINE_integer('max_stepsize', 64, 'max stepsize in lstm, as well as '
                                                 'the output channels of last layer in CNN')
 tf.app.flags.DEFINE_integer('num_hidden', 50, 'number of hidden units in lstm')
-tf.app.flags.DEFINE_integer('num_epochs', 2, 'maximum epochs')
-tf.app.flags.DEFINE_integer('batch_size', 40, 'the batch_size')
+tf.app.flags.DEFINE_integer('num_epochs', 10000, 'maximum epochs')
+tf.app.flags.DEFINE_integer('batch_size', 1, 'the batch_size')
 tf.app.flags.DEFINE_integer('save_steps', 1000, 'the step to save checkpoint')
-tf.app.flags.DEFINE_integer('validation_steps', 100, 'the step to validation')
+tf.app.flags.DEFINE_integer('validation_steps', 10000, 'the step to validation')
 
 tf.app.flags.DEFINE_float('decay_rate', 0.98, 'the lr decay rate')
 tf.app.flags.DEFINE_float('beta1', 0.9, 'parameter of adam optimizer beta1')

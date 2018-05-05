@@ -209,13 +209,13 @@ def main(_):
     else:
         raise ValueError('Only support 0 or 1 gpu.')
 
-    with tf.device(dev):
-        if FLAGS.mode == 'train':
-            train(FLAGS.train_dir, FLAGS.val_dir, FLAGS.mode)
-        '''
-        elif FLAGS.mode == 'infer':
-            infer(FLAGS.infer_dir, FLAGS.mode)
-        '''
+    #with tf.device(dev):
+    if FLAGS.mode == 'train':
+        train(FLAGS.train_dir, FLAGS.val_dir, FLAGS.mode)
+    '''
+    elif FLAGS.mode == 'infer':
+        infer(FLAGS.infer_dir, FLAGS.mode)
+    '''
 
 if __name__ == '__main__':
     tf.logging.set_verbosity(tf.logging.INFO)
