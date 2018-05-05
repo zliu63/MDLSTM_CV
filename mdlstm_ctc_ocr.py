@@ -108,8 +108,8 @@ class LSTMOCR(object):
         tf.summary.scalar('cost',self.cost)
 
         self.lrn_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate, self.global_step, FLAGS.decay_steps, FLAGS.decay_rate, staircase = True)
-        self.optimizer = tf.train.AdamOptimizer(learning_rate = FLAGS.initial_learning_rate, beta1= FLAGS.beta1, beta2 = FLAGS.beta2).minimize(self.loss, global_step = self.global_step)
-
+        #self.optimizer = tf.train.AdamOptimizer(learning_rate = FLAGS.initial_learning_rate, beta1= FLAGS.beta1, beta2 = FLAGS.beta2).minimize(self.loss, global_step = self.global_step)
+        self.optimizer = tf.train.MomentumOptimizer(learning_rate=self.lrn_rate,momentum=FLAGS.momentum,use_nesterov=True).minimize(self.cost,global_step=self.global_step)
         train_ops = [self.optimizer]  # no '+ self._extra_train_ops' here since we don't have cnn
         self.train_op = tf.group(*train_ops)
         self.decoded, self.log_prob = tf.nn.ctc_beam_search_decoder(self.logits, self.seq_len, merge_repeated = False)
