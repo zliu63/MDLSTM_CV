@@ -97,6 +97,7 @@ class LSTMOCR(object):
 
         logits = tf.reshape(logits, [batch_size, -1, num_classes])
         self.logits = tf.transpose(logits, (1, 0, 2))
+        tf.Print(self.logits, [tf.shape(self.logits)])
         #self.logits = tf.reshape(logits, [ -1,batch_size, num_classes]) 
 
     def _build_model1(self):
