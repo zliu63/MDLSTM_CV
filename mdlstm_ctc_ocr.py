@@ -37,6 +37,7 @@ class LSTMOCR(object):
         self.channels = FLAGS.image_channel
         self.hidden_size = FLAGS.num_hidden
         self.inputs = tf.placeholder(tf.float32, [None,self.h,self.w,self.channels])
+        self.is_training = True
 
     def build_graph(self):
         self._build_model()
@@ -46,6 +47,56 @@ class LSTMOCR(object):
         
 
     def _build_model(self):
+
+        batch_norm_params = {'is_training': self.is_training, 'decay': 0.9, 'updates_collections': None}
+        with slim.arg_scope([slim.conv2d, slim.fully_connected],
+                                normalizer_fn=slim.batch_norm,
+                                normalizer_params=batch_norm_params):
+                x = self.inputs #tf.reshape(inputs, [-1, self.height, self.width, 1])
+                x = tf.reshape(x, [FLAGS.batch_size, FLAGS.image_height, FLAGS.image_width, FLAGS.image_channel])
+                # For slim.conv2d, default argument values are like
+                # normalizer_fn = None, normalizer_params = None, <== slim.arg_scope changes these arguments
+                # padding='SAME', activation_fn=nn.relu,
+                # weights_initializer = initializers.xavier_initializer(),
+                # biases_initializer = init_ops.zeros_initializer,
+                net = slim.conv2d(x, 16, [5, 5], scope='conv1')
+                net = slim.max_pool2d(net, [2, 2], scope='pool1')
+                #net  = lstm2d.separable_lstm( net, 32, kernel_size=None, scope='lstm2d-1')
+                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 32, input_data = net, sh = [1,1], dims = None, scope_n = 'mdlstm1')
+                net = slim.conv2d(net, 64, [5, 5], scope='conv2')
+                net = slim.max_pool2d(net, [2, 2], scope='pool2')
+                #net  = lstm2d.separable_lstm( net, 124, kernel_size=None, scope='lstm2d-2')
+                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 124, input_data = net, sh = [1,1], dims = None, scope_n = 'mdlstm2')
+
+        ss = net.get_shape().as_list()
+        shape = tf.shape(net)
+        batch_size = shape[0]
+        #bat, h, w , chanels
+        outputs =  tf.transpose(net, [2,0,1,3])
+        outputs =  tf.reshape(outputs, [-1, shape[1]*shape[3]])
+
+        with tf.name_scope('Train'):
+            with tf.variable_scope("ctc_loss-1") as scope:
+                myInitializer = tf.truncated_normal_initializer(mean=0., stddev=.075, seed=None, dtype=tf.float32)
+            
+                W = tf.get_variable('w',[ss[1]*ss[3],200],initializer=myInitializer)
+                # Zero initialization
+                b = tf.get_variable('b', shape=[200],initializer=myInitializer)
+                
+                W1 = tf.get_variable('w1',[200,num_classes],initializer=myInitializer)
+                # Zero initialization
+                b1 = tf.get_variable('b1', shape=[num_classes],initializer=myInitializer)
+
+            tf.summary.histogram('histogram-b-ctc', b)
+            tf.summary.histogram('histogram-w-ctc', W)
+
+        logits = tf.matmul(outputs, W) +  b 
+        logits = slim.dropout(logits, is_training=self.is_training, scope='dropout4')
+        logits = tf.matmul(logits, W1) +  b1
+
+        self.logits = tf.reshape(logits, [ -1,batch_size, num_classes]) 
+
+    def _build_model1(self):
         
         # maybe no y, we use self.labels ?? y = tf.placeholder(tf.float32, [batch_size, 
 

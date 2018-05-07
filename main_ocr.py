@@ -42,7 +42,7 @@ def train(train_dir=None, val_dir=None, mode='train'):
     batch_size = FLAGS.batch_size
 
 
-    config = tf.ConfigProto(allow_soft_placement=True)
+    config = tf.ConfigProto(log_device_placement = True, allow_soft_placement=True)
     with tf.Session(config=config) as sess:
         sess.run(tf.global_variables_initializer())
 
@@ -75,7 +75,7 @@ def train(train_dir=None, val_dir=None, mode='train'):
                 feed = {model.inputs: batch_inputs,
                         model.labels: batch_labels,
                         model.seq_len: batch_seq_len}
-
+                model.is_training = True
                 # if summary is needed
                 # batch_cost,step,train_summary,_ = sess.run([cost,global_step,merged_summay,optimizer],feed)
 
@@ -109,7 +109,7 @@ def train(train_dir=None, val_dir=None, mode='train'):
                         val_feed = {model.inputs: val_inputs,
                                     model.labels: val_labels,
                                     model.seq_len: val_seq_len}
-
+                        model.is_training = False
                         dense_decoded, lr = \
                             sess.run([model.dense_decoded, model.lrn_rate],
                                      val_feed)
