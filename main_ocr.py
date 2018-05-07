@@ -70,8 +70,6 @@ def train(train_dir=None, val_dir=None, mode='train'):
                 indexs = [shuffle_idx[i % num_train_samples] for i in range(cur_batch * FLAGS.batch_size, (cur_batch + 1) * FLAGS.batch_size)]
                 batch_inputs, batch_seq_len, batch_labels = train_feeder.input_index_generate_batch(indexs)
                 # batch_inputs,batch_seq_len,batch_labels=utils.gen_batch(FLAGS.batch_size)
-                print('batch_seq_len')
-                print(batch_seq_len)
                 feed = {model.inputs: batch_inputs,
                         model.labels: batch_labels,
                         model.seq_len: batch_seq_len}
@@ -83,7 +81,6 @@ def train(train_dir=None, val_dir=None, mode='train'):
                 # calculate the cost
                 delta_batch_cost = batch_cost * FLAGS.batch_size
                 train_cost += delta_batch_cost
-                print('cur_batch = {}, delta_batch_cost = {}'.format(cur_batch, delta_batch_cost))
                 train_writer.add_summary(summary_str, step)
 
                 # save the checkpoint

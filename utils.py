@@ -17,9 +17,9 @@ tf.app.flags.DEFINE_integer('max_stepsize', 64, 'max stepsize in lstm, as well a
                                                 'the output channels of last layer in CNN')
 tf.app.flags.DEFINE_integer('num_hidden', 50, 'number of hidden units in lstm')
 tf.app.flags.DEFINE_integer('num_epochs', 10000, 'maximum epochs')
-tf.app.flags.DEFINE_integer('batch_size', 20, 'the batch_size')
+tf.app.flags.DEFINE_integer('batch_size', 1, 'the batch_size')
 tf.app.flags.DEFINE_integer('save_steps', 1000, 'the step to save checkpoint')
-tf.app.flags.DEFINE_integer('validation_steps', 10000, 'the step to validation')
+tf.app.flags.DEFINE_integer('validation_steps', 20000, 'the step to validation')
 
 tf.app.flags.DEFINE_float('decay_rate', 0.98, 'the lr decay rate')
 tf.app.flags.DEFINE_float('beta1', 0.9, 'parameter of adam optimizer beta1')
@@ -117,7 +117,7 @@ def accuracy_calculation(original_seq, decoded_seq, ignore_value=-1, isPrint=Fal
     for i, origin_label in enumerate(original_seq):
         decoded_label = [j for j in decoded_seq[i] if j != ignore_value]
         if isPrint and i < maxPrintLen:
-            # print('seq{0:4d}: origin: {1} decoded:{2}'.format(i, origin_label, decoded_label))
+            print('seq{0:4d}: origin: {1} decoded:{2}'.format(i, origin_label, decoded_label))
 
             with open('./test.csv', 'w') as f:
                 f.write(str(origin_label) + '\t' + str(decoded_label))

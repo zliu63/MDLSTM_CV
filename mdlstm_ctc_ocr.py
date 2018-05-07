@@ -166,14 +166,20 @@ class LSTMOCR(object):
         self.loss = tf.nn.ctc_loss(labels = self.labels, inputs = self.logits, sequence_length = self.seq_len)
         self.cost = tf.reduce_mean(self.loss)
         tf.summary.scalar('cost',self.cost)
-
+        tf.summary.histogram('cost', self.cost)
         self.lrn_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate, self.global_step, FLAGS.decay_steps, FLAGS.decay_rate, staircase = True)
         #self.optimizer = tf.train.AdamOptimizer(learning_rate = FLAGS.initial_learning_rate, beta1= FLAGS.beta1, beta2 = FLAGS.beta2).minimize(self.loss, global_step = self.global_step)
         self.optimizer = tf.train.MomentumOptimizer(learning_rate=self.lrn_rate,momentum=FLAGS.momentum,use_nesterov=True).minimize(self.cost,global_step=self.global_step)
         train_ops = [self.optimizer]  # no '+ self._extra_train_ops' here since we don't have cnn
         self.train_op = tf.group(*train_ops)
         self.decoded, self.log_prob = tf.nn.ctc_beam_search_decoder(self.logits, self.seq_len, merge_repeated = False)
-        self.dense_decoded = tf.sparse_tensor_to_dense(self.decoded[0], default_value =-1)    
+        self.ler = tf.reduce_mean(tf.edit_distance(tf.cast(self.decoded[0], tf.int32),self.labels))
+        #tf.Print(self.decoded[0],[self.decoded[0]],message = 'self.decoded[0]')
+        #tf.Print(self.labels, [self.labels], message = 'self.labels')
+        tf.summary.scalar('ler',self.ler)
+        self.dense_decoded = tf.sparse_tensor_to_dense(self.decoded[0], default_value =-1) 
+        tf.Print(self.dense_decoded, [self.dense_decoded], message = 'dense_decoded')
+        tf.Print(tf.sparse_tensor_to_dense(self.labels, default_value = -1), [tf.sparse_tensor_to_dense(self.labels,default_value=-1)], 'self.labels')   
 
         
 
