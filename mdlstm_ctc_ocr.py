@@ -89,7 +89,7 @@ class LSTMOCR(object):
 
             tf.summary.histogram('histogram-b-ctc', b)
             tf.summary.histogram('histogram-w-ctc', W)
-
+        logits = tf.Print(logits, [tf.shape(logits)], message = 'before apply w and b')
         logits = tf.matmul(outputs, W) +  b 
         logits = slim.dropout(logits, is_training=self.is_training, scope='dropout4')
         logits = tf.matmul(logits, W1) +  b1
