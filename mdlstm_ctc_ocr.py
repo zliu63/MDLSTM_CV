@@ -62,11 +62,11 @@ class LSTMOCR(object):
                 net = slim.conv2d(x, 16, [3, 3], scope='conv1')
                 net = slim.max_pool2d(net, [2, 2], scope='pool1')
                 #net  = lstm2d.separable_lstm( net, 32, kernel_size=None, scope='lstm2d-1')
-                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 32, input_data = net, sh = [1,1], dims = None, scope_n = 'mdlstm1')
+                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 32, input_data = net, sh = [3,3], dims = None, scope_n = 'mdlstm1')
                 net = slim.conv2d(net, 64, [3, 3], scope='conv2')
                 net = slim.max_pool2d(net, [2, 2], scope='pool2')
                 #net  = lstm2d.separable_lstm( net, 124, kernel_size=None, scope='lstm2d-2')
-                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 50, input_data = net, sh = [1,1], dims = None, scope_n = 'mdlstm2')
+                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 50, input_data = net, sh = [3,3], dims = None, scope_n = 'mdlstm2')
 
         ss = net.get_shape().as_list()
         shape = tf.shape(net)
