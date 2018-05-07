@@ -79,11 +79,11 @@ class LSTMOCR(object):
             with tf.variable_scope("ctc_loss-1") as scope:
                 myInitializer = tf.truncated_normal_initializer(mean=0., stddev=.075, seed=None, dtype=tf.float32)
             
-                W = tf.get_variable('w',[ss[1]*ss[3],200],initializer=myInitializer)
+                W = tf.get_variable('w',[ss[1]*ss[3],400],initializer=myInitializer)
                 # Zero initialization
-                b = tf.get_variable('b', shape=[200],initializer=myInitializer)
+                b = tf.get_variable('b', shape=[400],initializer=myInitializer)
                 
-                W1 = tf.get_variable('w1',[200,num_classes],initializer=myInitializer)
+                W1 = tf.get_variable('w1',[400,num_classes],initializer=myInitializer)
                 # Zero initialization
                 b1 = tf.get_variable('b1', shape=[num_classes],initializer=myInitializer)
 
