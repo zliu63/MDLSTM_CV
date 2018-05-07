@@ -67,11 +67,11 @@ def train(train_dir=None, val_dir=None, mode='train'):
                 if (cur_batch + 1) % 100 == 0:
                     print('batch', cur_batch, ': time', time.time() - batch_time)
                 batch_time = time.time()
-                indexs = [shuffle_idx[i % num_train_samples] for i in
-                          range(cur_batch * FLAGS.batch_size, (cur_batch + 1) * FLAGS.batch_size)]
-                batch_inputs, batch_seq_len, batch_labels = \
-                    train_feeder.input_index_generate_batch(indexs)
+                indexs = [shuffle_idx[i % num_train_samples] for i in range(cur_batch * FLAGS.batch_size, (cur_batch + 1) * FLAGS.batch_size)]
+                batch_inputs, batch_seq_len, batch_labels = train_feeder.input_index_generate_batch(indexs)
                 # batch_inputs,batch_seq_len,batch_labels=utils.gen_batch(FLAGS.batch_size)
+                print('batch_seq_len')
+                print(batch_seq_len)
                 feed = {model.inputs: batch_inputs,
                         model.labels: batch_labels,
                         model.seq_len: batch_seq_len}
@@ -79,9 +79,7 @@ def train(train_dir=None, val_dir=None, mode='train'):
                 # if summary is needed
                 # batch_cost,step,train_summary,_ = sess.run([cost,global_step,merged_summay,optimizer],feed)
 
-                summary_str, batch_cost, step, _ = \
-                    sess.run([model.merged_summay, model.cost, model.global_step,
-                              model.train_op], feed)
+                summary_str, batch_cost, step, _ = sess.run([model.merged_summay, model.cost, model.global_step,model.train_op], feed)
                 # calculate the cost
                 delta_batch_cost = batch_cost * FLAGS.batch_size
                 train_cost += delta_batch_cost
