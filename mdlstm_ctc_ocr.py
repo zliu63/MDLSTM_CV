@@ -94,7 +94,10 @@ class LSTMOCR(object):
         logits = slim.dropout(logits, is_training=self.is_training, scope='dropout4')
         logits = tf.matmul(logits, W1) +  b1
 
-        self.logits = tf.reshape(logits, [ -1,batch_size, num_classes]) 
+
+        logits = tf.reshape(logits, [batch_size, -1, num_classes])
+        self.logits = tf.transpose(logits, (1, 0, 2))
+        #self.logits = tf.reshape(logits, [ -1,batch_size, num_classes]) 
 
     def _build_model1(self):
         
