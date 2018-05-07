@@ -17,7 +17,7 @@ tf.app.flags.DEFINE_integer('max_stepsize', 64, 'max stepsize in lstm, as well a
                                                 'the output channels of last layer in CNN')
 tf.app.flags.DEFINE_integer('num_hidden', 50, 'number of hidden units in lstm')
 tf.app.flags.DEFINE_integer('num_epochs', 10000, 'maximum epochs')
-tf.app.flags.DEFINE_integer('batch_size', 40, 'the batch_size')
+tf.app.flags.DEFINE_integer('batch_size', 20, 'the batch_size')
 tf.app.flags.DEFINE_integer('save_steps', 1000, 'the step to save checkpoint')
 tf.app.flags.DEFINE_integer('validation_steps', 10000, 'the step to validation')
 
