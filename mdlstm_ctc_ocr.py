@@ -92,7 +92,9 @@ class LSTMOCR(object):
         logits = tf.Print(logits, [tf.shape(logits)], message = 'before apply w and b')
         logits = tf.matmul(outputs, W) +  b 
         logits = slim.dropout(logits, is_training=self.is_training, scope='dropout4')
+        logits = tf.Print(logits, [tf.shape(logits)], message = 'before apply add b')
         logits = tf.matmul(logits, W1) +  b1
+        logits = tf.Print(logits, [tf.shape(logits)], message = 'after apply add b')
 
 
         logits = tf.reshape(logits, [batch_size, -1, num_classes])
