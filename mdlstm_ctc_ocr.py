@@ -66,7 +66,7 @@ class LSTMOCR(object):
                 net = slim.conv2d(net, 64, [3, 3], scope='conv2')
                 net = slim.max_pool2d(net, [2, 2], scope='pool2')
                 #net  = lstm2d.separable_lstm( net, 124, kernel_size=None, scope='lstm2d-2')
-                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 124, input_data = net, sh = [1,1], dims = None, scope_n = 'mdlstm2')
+                net,_ = multi_dimensional_rnn_while_loop(rnn_size = 248, input_data = net, sh = [1,1], dims = None, scope_n = 'mdlstm2')
 
         ss = net.get_shape().as_list()
         shape = tf.shape(net)
@@ -79,11 +79,11 @@ class LSTMOCR(object):
             with tf.variable_scope("ctc_loss-1") as scope:
                 myInitializer = tf.truncated_normal_initializer(mean=0., stddev=.075, seed=None, dtype=tf.float32)
             
-                W = tf.get_variable('w',[ss[1]*ss[3],400],initializer=myInitializer)
+                W = tf.get_variable('w',[ss[1]*ss[3],200],initializer=myInitializer)
                 # Zero initialization
-                b = tf.get_variable('b', shape=[400],initializer=myInitializer)
+                b = tf.get_variable('b', shape=[200],initializer=myInitializer)
                 
-                W1 = tf.get_variable('w1',[400,num_classes],initializer=myInitializer)
+                W1 = tf.get_variable('w1',[200,num_classes],initializer=myInitializer)
                 # Zero initialization
                 b1 = tf.get_variable('b1', shape=[num_classes],initializer=myInitializer)
 
